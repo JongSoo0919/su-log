@@ -37,7 +37,7 @@ class PostControllerTest {
                         .content(" { \"title\":\"제목 입니다.\", \"content\":\"내용 입니다.\" } ")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Hello World"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(""))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -50,7 +50,7 @@ class PostControllerTest {
                         .content(" { \"title\":\"\", \"content\":\"내용 입니다.\" } ")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Hello World"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("타이틀을 입력해주세요."))
                 .andDo(MockMvcResultHandlers.print());
     }
 

@@ -36,6 +36,6 @@ public class PostController {
             error.put(fieldName, errorMessage);
             return error;
         }
-        return Map.of();
+        return Map.of("title", "");
     }
 }
