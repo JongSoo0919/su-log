@@ -39,8 +39,21 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Hello World"))
                 .andDo(MockMvcResultHandlers.print());
-
     }
+
+    @Test
+    @DisplayName("/posts 요청 시 title 값은 필수")
+    void 예시_컨트롤러_post_empty_title() throws Exception {
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(" { \"title\":\"\", \"content\":\"내용 입니다.\" } ")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Hello World"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 
 
 }

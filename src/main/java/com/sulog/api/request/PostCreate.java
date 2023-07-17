@@ -1,11 +1,17 @@
 package com.sulog.api.request;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+
 @ToString
 @Setter
+@Getter
 public class PostCreate {
-    public String title;
-    public String content;
+    @NotBlank
+    private String title;
+    @NotBlank
+    private String content;
 }
