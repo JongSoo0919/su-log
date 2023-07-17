@@ -2,8 +2,13 @@ package com.sulog.api.controller;
 
 import com.sulog.api.request.PostCreate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -15,17 +20,22 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public String post(
-            // 1. 각자 단일 파라미터로 받는 방법
-//            @RequestParam String title,
-//            @RequestParam String content
-            // 2. Map을 통해서 한번에 받아오는 방법
-//            @RequestParam Map<String, String> params
-            // 3. DTO 객체를 통해서 각 객체에 매핑시키는 방법 Setter 필수
-            @RequestBody PostCreate params
-            ){
-//        log.info("title : {}, content {}",title, content);
+    public Map<String, String> post(
+            @RequestBody @Valid PostCreate params,
+            BindingResult result
+            ) throws Exception{
         log.info("params : {} ", params.toString());
-        return "Hello World";
+
+        if (result.hasErrors()) {
+            List<FieldError> fieldErrors = result.getFieldErrors();
+            FieldError firstFieldError = fieldErrors.get(0);
+            String fieldName = firstFieldError.getField(); // title
+            String errorMessage = firstFieldError.getDefaultMessage(); // error 메세지
+
+            Map<String, String> error = new HashMap<>();
+            error.put(fieldName, errorMessage);
+            return error;
+        }
+        return Map.of("title", "");
     }
 }
