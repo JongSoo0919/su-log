@@ -2,9 +2,13 @@ package com.sulog.api.controller;
 
 import com.sulog.api.request.PostCreate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -16,14 +20,22 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public String post(
-            @RequestBody @Valid PostCreate params
+    public Map<String, String> post(
+            @RequestBody @Valid PostCreate params,
+            BindingResult result
             ) throws Exception{
         log.info("params : {} ", params.toString());
 
-        String title = params.getTitle();
-        String content = params.getContent();
+        if (result.hasErrors()) {
+            List<FieldError> fieldErrors = result.getFieldErrors();
+            FieldError firstFieldError = fieldErrors.get(0);
+            String fieldName = firstFieldError.getField(); // title
+            String errorMessage = firstFieldError.getDefaultMessage(); // error 메세지
 
-        return "Hello World";
+            Map<String, String> error = new HashMap<>();
+            error.put(fieldName, errorMessage);
+            return error;
+        }
+        return Map.of();
     }
 }
