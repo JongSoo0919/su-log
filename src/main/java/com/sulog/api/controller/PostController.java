@@ -21,21 +21,10 @@ public class PostController {
 
     @PostMapping("/posts")
     public Map<String, String> post(
-            @RequestBody @Valid PostCreate params,
-            BindingResult result
+            @RequestBody @Valid PostCreate params
             ) throws Exception{
         log.info("params : {} ", params.toString());
 
-        if (result.hasErrors()) {
-            List<FieldError> fieldErrors = result.getFieldErrors();
-            FieldError firstFieldError = fieldErrors.get(0);
-            String fieldName = firstFieldError.getField(); // title
-            String errorMessage = firstFieldError.getDefaultMessage(); // error 메세지
-
-            Map<String, String> error = new HashMap<>();
-            error.put(fieldName, errorMessage);
-            return error;
-        }
         return Map.of("title", "");
     }
 }
