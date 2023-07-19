@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class ExceptionController {
 
     /**
      * 검증되지 않은 Data에 대한 Exception 처리

@@ -1,14 +1,10 @@
-package com.sulog.api.controller;
+package com.sulog.api.controller.post;
 
-import com.sulog.api.request.PostCreate;
+import com.sulog.api.model.post.request.PostCreate;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController

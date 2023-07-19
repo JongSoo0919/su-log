@@ -1,4 +1,4 @@
-package com.sulog.api.request;
+package com.sulog.api.model.post.request;
 
 import lombok.Getter;
 import lombok.Setter;
