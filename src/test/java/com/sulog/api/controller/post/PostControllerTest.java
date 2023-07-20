@@ -1,4 +1,4 @@
-package com.sulog.api.controller;
+package com.sulog.api.controller.post;
 
 import com.sulog.api.domain.post.Post;
 import com.sulog.api.repository.post.PostRepository;
@@ -27,9 +27,6 @@ class PostControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private PostRepository postRepository;
 
     @Test
     @DisplayName("/posts 요청 시 Hello World 출력")
