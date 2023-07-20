@@ -25,14 +25,6 @@ public class Post {
         this.title = title;
         this.content = content;
     }
-
-    @Builder
-    public Post(Long id, String title, String content) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,9 +32,11 @@ public class Post {
         Post post = (Post) o;
         return Objects.equals(id, post.id);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+    public void update(String content){
+        this.content = content;
     }
 }
