@@ -11,4 +11,10 @@ import java.util.Objects;
 public class PostResponseDto {
     private String title;
     private String content;
+
+    @Builder
+    public PostResponseDto(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

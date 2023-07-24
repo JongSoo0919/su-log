@@ -14,8 +14,11 @@ public class PostService {
     private final PostRepository postRepository;
 
     public Post write(PostRequestDto postCreate) {
-        // postCreate(DTO) -> Entity
-        Post post = new Post(postCreate.getTitle(), postCreate.getContent());
+        Post post = Post.builder()
+                .title(postCreate.getTitle())
+                .content(postCreate.getContent())
+                .build();
+
         return postRepository.save(post);
     }
 }
