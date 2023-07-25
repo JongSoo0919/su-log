@@ -12,13 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-    @GetMapping("/posts")
+    @GetMapping("/posts/get-test")
     public PostResponseRssDto get(
             @RequestParam(name = "title") String title,
             @RequestParam(name = "content") String content,
@@ -36,7 +38,7 @@ public class PostController {
             @PathVariable Long postId,
             HttpServletRequest request
     ){
-        PostResponseDto postResponseDto = PostResponseDto.of(postService.getOne(postId));
+        PostResponseDto postResponseDto = new PostResponseDto(postService.getOne(postId));
 
         return ResponseEntity.ok(postResponseDto);
     }
@@ -49,6 +51,13 @@ public class PostController {
         PostResponseRssDto postResponseRssDto = PostResponseRssDto.of(postService.getRss(postId));
 
         return ResponseEntity.ok(postResponseRssDto);
+    }
+
+    @GetMapping("/posts")
+    public List<PostResponseDto> getAll(){
+        return postService.getAll().stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/posts")

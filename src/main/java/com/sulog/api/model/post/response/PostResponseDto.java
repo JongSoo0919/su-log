@@ -12,6 +12,16 @@ public class PostResponseDto {
     private String title;
     private String content;
 
+    /**
+     * Of 보다는 생성자 오버로딩이 나은듯
+     * @param post
+     */
+    public PostResponseDto(Post post){
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+    }
+
     @Builder
     public PostResponseDto(Long id, String title, String content) {
         this.id = id;

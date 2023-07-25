@@ -5,6 +5,7 @@ import com.sulog.api.domain.post.Post;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.response.PostResponseDto;
 import com.sulog.api.repository.post.PostRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.regex.Matcher;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -51,7 +54,7 @@ class PostControllerTest {
 
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/get-test")
                         .params(multiValueMap))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(response)))
@@ -139,5 +142,34 @@ class PostControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @DisplayName("글 다수 조회")
+    public void 글_다수_조회() throws Exception{
+        //given
+        Post post1 = Post.builder()
+                .title("배고파1")
+                .content("삼겹살 먹고 싶다.1")
+                .build();
+        Post post2 = Post.builder()
+                .title("배고파2")
+                .content("삼겹살 먹고 싶다.2")
+                .build();
+
+        postRepository.save(post1);
+        postRepository.save(post2);
+
+        //when & then
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(post1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("배고파1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("삼겹살 먹고 싶다.1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(post2.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("배고파2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].content").value("삼겹살 먹고 싶다.2"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 
 }
