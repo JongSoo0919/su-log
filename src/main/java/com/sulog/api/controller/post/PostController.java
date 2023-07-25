@@ -30,6 +30,16 @@ public class PostController {
 
     }
 
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<PostResponseDto> getOne(
+            @PathVariable Long postId,
+            HttpServletRequest request
+    ){
+        PostResponseDto postResponseDto = PostResponseDto.of(postService.getOne(postId));
+
+        return ResponseEntity.ok(postResponseDto);
+    }
+
     @PostMapping("/posts")
     public ResponseEntity<Long> post(
             @RequestBody @Valid PostRequestDto params
@@ -40,4 +50,6 @@ public class PostController {
 
         return ResponseEntity.ok(post.getId());
     }
+
+
 }

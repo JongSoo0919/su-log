@@ -1,8 +1,10 @@
 package com.sulog.api.service.post;
 
+import com.sulog.api.domain.post.Post;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.repository.post.PostRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,11 @@ class PostServiceTest {
     @Autowired
     private PostRepository postRepository;
 
+    @BeforeEach
+    public void clean(){
+        postRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("글 작성")
     void 글_작성() {
@@ -32,6 +39,27 @@ class PostServiceTest {
 
         //then
         Assertions.assertThat(1).isEqualTo(postRepository.count());
+    }
+
+    @Test
+    @DisplayName("글 1개 조회")
+    public void 글_단건_조회(){
+        //given
+        Post requestPost = Post.builder()
+                .title("배고파")
+                .content("삼겹살 먹고 싶다.")
+                .build();
+        postRepository.save(requestPost);
+
+        Long postId = 1L;
+
+        //when
+        Post post = postService.getOne(postId);
+
+        //then
+        assertNotNull(post);
+        assertEquals("배고파", post.getTitle());
+        assertEquals("삼겹살 먹고 싶다.",post.getContent());
     }
 
 }
