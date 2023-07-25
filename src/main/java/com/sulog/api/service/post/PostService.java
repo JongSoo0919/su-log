@@ -28,4 +28,10 @@ public class PostService {
 
         return post;
     }
+    public Post getRss(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글 입니다."));
+
+        return post;
+    }
 }

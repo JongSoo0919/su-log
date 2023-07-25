@@ -3,6 +3,7 @@ package com.sulog.api.controller.post;
 import com.sulog.api.domain.post.Post;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.response.PostResponseDto;
+import com.sulog.api.model.post.response.PostResponseRssDto;
 import com.sulog.api.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +19,12 @@ import javax.validation.Valid;
 public class PostController {
     private final PostService postService;
     @GetMapping("/posts")
-    public PostResponseDto get(
+    public PostResponseRssDto get(
             @RequestParam(name = "title") String title,
             @RequestParam(name = "content") String content,
             HttpServletRequest request
     ){
-        return PostResponseDto.builder()
+        return PostResponseRssDto.builder()
                 .title(title)
                 .content(content)
                 .build();
@@ -38,6 +39,16 @@ public class PostController {
         PostResponseDto postResponseDto = PostResponseDto.of(postService.getOne(postId));
 
         return ResponseEntity.ok(postResponseDto);
+    }
+
+    @GetMapping("/posts/{postId}/rss")
+    public ResponseEntity<PostResponseRssDto> getRss(
+            @PathVariable Long postId,
+            HttpServletRequest request
+    ){
+        PostResponseRssDto postResponseRssDto = PostResponseRssDto.of(postService.getRss(postId));
+
+        return ResponseEntity.ok(postResponseRssDto);
     }
 
     @PostMapping("/posts")
