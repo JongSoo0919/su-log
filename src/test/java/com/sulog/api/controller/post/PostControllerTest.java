@@ -1,8 +1,11 @@
 package com.sulog.api.controller.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sulog.api.domain.post.Post;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.response.PostResponseDto;
+import com.sulog.api.repository.post.PostRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,16 @@ class PostControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private PostRepository postRepository;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    public void clean(){
+        postRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("/posts 요청 시 Hello World 출력")
     void 예시_컨트롤러_동작_확인() throws Exception {
@@ -85,6 +97,26 @@ class PostControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @DisplayName("글 단건 조회")
+    public void 글_단건_조회() throws Exception{
+        //given
+        Post post = Post.builder()
+                .title("배고파")
+                .content("삼겹살 먹고 싶다.")
+                .build();
+
+        postRepository.save(post);
+
+        //when & then
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(post.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("배고파"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("삼겹살 먹고 싶다."))
+                .andDo(MockMvcResultHandlers.print());
+    }
 
 
 }
