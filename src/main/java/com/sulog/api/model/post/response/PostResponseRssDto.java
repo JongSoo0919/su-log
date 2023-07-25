@@ -7,27 +7,27 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PostResponseDto {
+public class PostResponseRssDto {
     private Long id;
     private String title;
     private String content;
 
     @Builder
-    public PostResponseDto(Long id, String title, String content) {
+    public PostResponseRssDto(Long id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
     }
 
     /**
-     * 공통 ResponseDto는 전체 타이틀이 다 나감, 서비스 정책
+     * RSS는 전체 타이틀 중 10 글자만 나가야한다, 서비스 정책
      * @param post
      * @return
      */
-    public static PostResponseDto of(Post post){
-        PostResponseDto postResponseDto = PostResponseDto.builder()
+    public static PostResponseRssDto of(Post post){
+        PostResponseRssDto postResponseDto = PostResponseRssDto.builder()
                 .id(post.getId())
-                .title(post.getTitle())
+                .title(post.getTitle().substring(0, Math.min(post.getTitle().length(), 10)))
                 .content(post.getContent())
                 .build();
 

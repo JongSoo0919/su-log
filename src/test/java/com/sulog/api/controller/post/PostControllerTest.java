@@ -118,5 +118,26 @@ class PostControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @DisplayName("RSS는 타이틀 중 10글자만 반환 되어야 한다.")
+    public void RSS_글_단건_조회() throws Exception{
+        //given
+        Post post = Post.builder()
+                .title("12312312319876543")
+                .content("삼겹살 먹고 싶다.")
+                .build();
+
+        postRepository.save(post);
+
+        //when & then
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}/rss", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(post.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("1231231231"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("삼겹살 먹고 싶다."))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 
 }
