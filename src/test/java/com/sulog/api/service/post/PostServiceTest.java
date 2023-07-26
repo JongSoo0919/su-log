@@ -2,6 +2,7 @@ package com.sulog.api.service.post;
 
 import com.sulog.api.domain.post.Post;
 import com.sulog.api.model.post.request.PostRequestDto;
+import com.sulog.api.model.post.request.PostSearchRequestDto;
 import com.sulog.api.repository.post.PostRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,10 +59,8 @@ class PostServiceTest {
                 .build();
         postRepository.save(requestPost);
 
-        Long postId = 1L;
-
         //when
-        Post post = postService.getOne(postId);
+        Post post = postService.getOne(requestPost.getId());
 
         //then
         assertNotNull(post);
@@ -104,16 +103,17 @@ class PostServiceTest {
 
         postRepository.saveAll(requestPosts);
 
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
-
+        PostSearchRequestDto postSearchRequestDto = PostSearchRequestDto.builder()
+                .page(1)
+                .build();
         //when
-        List<Post> posts = postService.getPostsByPaging(pageable)
+        List<Post> posts = postService.getPostsByPaging(postSearchRequestDto)
                 .stream()
                 .collect(Collectors.toList());
 
         //then
-        Assertions.assertThat(5).isEqualTo(posts.size());
+        Assertions.assertThat(10).isEqualTo(posts.size());
         Assertions.assertThat("배고파요~ : 29").isEqualTo(posts.get(0).getTitle());
-        Assertions.assertThat("배고파요~ : 25").isEqualTo(posts.get(4).getTitle());
+        Assertions.assertThat("배고파요~ : 20").isEqualTo(posts.get(9).getTitle());
     }
 }

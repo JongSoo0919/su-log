@@ -2,6 +2,7 @@ package com.sulog.api.controller.post;
 
 import com.sulog.api.domain.post.Post;
 import com.sulog.api.model.post.request.PostRequestDto;
+import com.sulog.api.model.post.request.PostSearchRequestDto;
 import com.sulog.api.model.post.response.PostResponseDto;
 import com.sulog.api.model.post.response.PostResponseRssDto;
 import com.sulog.api.service.post.PostService;
@@ -59,15 +60,16 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponseDto> getAll(
 //            @RequestParam(name = "page", required = false) Integer page
-            Pageable page
+//            Pageable page
+            @ModelAttribute PostSearchRequestDto postSearchRequestDto
             ){
-        if(Objects.isNull(page)){
+        if(Objects.isNull(postSearchRequestDto)){
             return postService.getAll().stream()
                     .map(PostResponseDto::new)
                     .collect(Collectors.toList());
         }
 
-        return postService.getPostsByPaging(page).stream()
+        return postService.getPostsByPaging(postSearchRequestDto).stream()
                 .map(PostResponseDto::new)
                 .collect(Collectors.toList());
     }
