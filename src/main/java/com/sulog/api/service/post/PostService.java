@@ -5,6 +5,10 @@ import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +41,20 @@ public class PostService {
         return post;
     }
 
+    /**
+     * 게시글 전체를 가져온다.
+     * @return
+     */
     public List<Post> getAll() {
         return postRepository.findAll();
+    }
+
+    /**
+     * 게시글 페이징 처리
+     * @return
+     */
+    public Page<Post> getPostsByPaging(Pageable pageable) {
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
+        return postRepository.findAll(pageable);
     }
 }

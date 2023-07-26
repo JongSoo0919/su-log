@@ -9,8 +9,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,8 +70,8 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 여러개 조회")
-    public void 글_여러개_조회(){
+    @DisplayName("글 전체 조회")
+    public void 글_전체_조회(){
         //given
         Post requestPost1 = Post.builder()
                 .title("배고파")
@@ -86,5 +91,29 @@ class PostServiceTest {
         //then
         Assertions.assertThat(2).isEqualTo(posts.size());
     }
+    @Test
+    @DisplayName("글 1페이지 조회 id 역순 조회")
+    public void 글_1페이지_조회_id_역순_조회(){
+        //given
+        List<Post> requestPosts = IntStream.range(0, 30)
+                .mapToObj(i -> Post.builder()
+                        .title("배고파요~ : " + i)
+                        .content("삼겹살 먹고 싶다 : "+ i)
+                        .build())
+                .collect(Collectors.toList());
 
+        postRepository.saveAll(requestPosts);
+
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
+
+        //when
+        List<Post> posts = postService.getPostsByPaging(pageable)
+                .stream()
+                .collect(Collectors.toList());
+
+        //then
+        Assertions.assertThat(5).isEqualTo(posts.size());
+        Assertions.assertThat("배고파요~ : 29").isEqualTo(posts.get(0).getTitle());
+        Assertions.assertThat("배고파요~ : 25").isEqualTo(posts.get(4).getTitle());
+    }
 }
