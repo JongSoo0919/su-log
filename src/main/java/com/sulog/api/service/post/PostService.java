@@ -2,6 +2,7 @@ package com.sulog.api.service.post;
 
 import com.sulog.api.domain.post.Post;
 import com.sulog.api.model.post.request.PostRequestDto;
+import com.sulog.api.model.post.request.PostSearchRequestDto;
 import com.sulog.api.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,11 +51,19 @@ public class PostService {
     }
 
     /**
-     * 게시글 페이징 처리
+     * 게시글 페이징 처리 By Pageable
      * @return
      */
-    public Page<Post> getPostsByPaging(Pageable pageable) {
-//        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
-        return postRepository.findAll(pageable);
+//    public List<Post> getPostsByPaging(Pageable pageable) {
+////        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
+////        return postRepository.findAll(pageable);
+//    }
+
+    /**
+     * 게시글 페이징 처리 By QueryDSL
+     * @return
+     */
+    public List<Post> getPostsByPaging(PostSearchRequestDto postSearchRequestDto) {
+        return postRepository.getList(postSearchRequestDto);
     }
 }
