@@ -20,7 +20,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.List;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -171,5 +174,34 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].content").value("삼겹살 먹고 싶다.2"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    @DisplayName("글 페이징 조회")
+    public void 글_페이징_조회() throws Exception{
+        //given
+        List<Post> requestPosts = IntStream.range(0, 30)
+                .mapToObj(i -> Post.builder()
+                        .title("배고파요~ : " + i)
+                        .content("삼겹살 먹고 싶다 : "+ i)
+                        .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(requestPosts);
+
+        //when & then
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=1&sort=id,desc&size=5")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(30))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("배고파요~ : 29"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("삼겹살 먹고 싶다 : 29"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[4].id").value(26))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[4].title").value("배고파요~ : 25"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[4].content").value("삼겹살 먹고 싶다 : 25"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
 
 }
