@@ -38,4 +38,41 @@ public class ExceptionController {
                         .forEach(fieldError -> response.addValidation(fieldError.getField(), fieldError.getDefaultMessage()));
         return response;
     }
+
+    @ExceptionHandler(SulogException.class)
+    public ResponseEntity<ErrorResponse> sulogExceptionHandler(SulogException e){
+        log.error(e.getMessage());
+        ErrorResponse response =  ErrorResponse.builder()
+                .code(String.valueOf(e.getStatusCode()))
+                .message(e.getMessage())
+                .validation(e.getValidation())
+                .build();
+
+        return ResponseEntity.status(e.getStatusCode())
+                .body(response);
+    }
+
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    @ExceptionHandler(PostNotFoundException.class)
+//    public ErrorResponse postNotFound(PostNotFoundException e){
+//        log.error(e.getMessage());
+//        ErrorResponse response =  ErrorResponse.builder()
+//                .code("404")
+//                .message(e.getMessage())
+//                .build();
+//
+//        return response;
+//    }
+//
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(InvalidException.class)
+//    public ErrorResponse postNotFound(InvalidException e){
+//        log.error(e.getMessage());
+//        ErrorResponse response =  ErrorResponse.builder()
+//                .code("400")
+//                .message(e.getMessage())
+//                .build();
+//
+//        return response;
+//    }
 }

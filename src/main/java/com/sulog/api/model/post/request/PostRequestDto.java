@@ -1,5 +1,6 @@
 package com.sulog.api.model.post.request;
 
+import com.sulog.api.exception.InvalidException;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -16,5 +17,12 @@ public class PostRequestDto {
     public PostRequestDto(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void validate() {
+        if(title.contains("금지어")){
+            throw new InvalidException("title", "제목은 금지어를 포함할 수 없습니다.");
+        }
+
     }
 }

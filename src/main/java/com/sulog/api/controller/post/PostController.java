@@ -1,6 +1,7 @@
 package com.sulog.api.controller.post;
 
 import com.sulog.api.domain.post.Post;
+import com.sulog.api.exception.InvalidException;
 import com.sulog.api.model.post.PostEdit;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.request.PostSearchRequestDto;
@@ -84,7 +85,7 @@ public class PostController {
             @RequestBody @Valid PostRequestDto params
             ) throws Exception{
         log.info("params : {} ", params.toString());
-
+        params.validate(); // TODO : aop로 메서드 실행마다 체크
         Post post = postService.write(params);
 
         return ResponseEntity.ok(post.getId());
