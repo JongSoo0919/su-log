@@ -1,6 +1,8 @@
 package com.sulog.api.service.post;
 
 import com.sulog.api.domain.post.Post;
+import com.sulog.api.domain.post.PostEditor;
+import com.sulog.api.model.post.PostEdit;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.request.PostSearchRequestDto;
 import com.sulog.api.repository.post.PostRepository;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -65,5 +68,28 @@ public class PostService {
      */
     public List<Post> getPostsByPaging(PostSearchRequestDto postSearchRequestDto) {
         return postRepository.getList(postSearchRequestDto);
+    }
+
+    /**
+     * JPA의 쿼리는 커밋 시점에 날라가므로 Transactional
+     * @param postId
+     * @param postEdit
+     */
+    @Transactional
+    public Post edit(Long postId, PostEdit postEdit){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글 입니다."));
+
+//        post.update(postEdit);
+
+        PostEditor.PostEditorBuilder postEditorBuilder = post.toEditor();
+        PostEditor postEditor = postEditorBuilder
+                .title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+
+        post.edit(postEditor);
+
+        return post;
     }
 }

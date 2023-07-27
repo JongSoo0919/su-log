@@ -1,5 +1,6 @@
 package com.sulog.api.domain.post;
 
+import com.sulog.api.model.post.PostEdit;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +37,20 @@ public class Post {
     public int hashCode() {
         return Objects.hash(id);
     }
-    public void update(String content){
-        this.content = content;
+
+    public void update(PostEdit postEdit){
+        this.title = postEdit.getTitle();
+        this.content = postEdit.getContent();
+    }
+
+    public PostEditor.PostEditorBuilder toEditor(){
+        return PostEditor.builder()
+                .title(title)
+                .content(content);
+    }
+
+    public void edit(PostEditor postEditor){
+        this.title = Objects.isNull(postEditor.getTitle()) ? this.title : postEditor.getTitle();
+        this.content = Objects.isNull(postEditor.getContent()) ? this.content : postEditor.getContent();
     }
 }

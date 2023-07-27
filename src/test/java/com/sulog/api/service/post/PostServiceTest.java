@@ -1,6 +1,7 @@
 package com.sulog.api.service.post;
 
 import com.sulog.api.domain.post.Post;
+import com.sulog.api.model.post.PostEdit;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.request.PostSearchRequestDto;
 import com.sulog.api.repository.post.PostRepository;
@@ -30,7 +31,7 @@ class PostServiceTest {
     private PostRepository postRepository;
 
     @BeforeEach
-    public void clean(){
+    public void clean() {
         postRepository.deleteAll();
     }
 
@@ -51,7 +52,7 @@ class PostServiceTest {
 
     @Test
     @DisplayName("글 1개 조회")
-    public void 글_단건_조회(){
+    public void 글_단건_조회() {
         //given
         Post requestPost = Post.builder()
                 .title("배고파")
@@ -65,12 +66,12 @@ class PostServiceTest {
         //then
         assertNotNull(post);
         assertEquals("배고파", post.getTitle());
-        assertEquals("삼겹살 먹고 싶다.",post.getContent());
+        assertEquals("삼겹살 먹고 싶다.", post.getContent());
     }
 
     @Test
     @DisplayName("글 전체 조회")
-    public void 글_전체_조회(){
+    public void 글_전체_조회() {
         //given
         Post requestPost1 = Post.builder()
                 .title("배고파")
@@ -90,14 +91,15 @@ class PostServiceTest {
         //then
         Assertions.assertThat(2).isEqualTo(posts.size());
     }
+
     @Test
     @DisplayName("글 1페이지 조회 id 역순 조회")
-    public void 글_1페이지_조회_id_역순_조회(){
+    public void 글_1페이지_조회_id_역순_조회() {
         //given
         List<Post> requestPosts = IntStream.range(0, 30)
                 .mapToObj(i -> Post.builder()
                         .title("배고파요~ : " + i)
-                        .content("삼겹살 먹고 싶다 : "+ i)
+                        .content("삼겹살 먹고 싶다 : " + i)
                         .build())
                 .collect(Collectors.toList());
 
@@ -115,5 +117,57 @@ class PostServiceTest {
         Assertions.assertThat(10).isEqualTo(posts.size());
         Assertions.assertThat("배고파요~ : 29").isEqualTo(posts.get(0).getTitle());
         Assertions.assertThat("배고파요~ : 20").isEqualTo(posts.get(9).getTitle());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    public void 글_제목_수정() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("이건 바꾸고 싶은 제목이야.")
+//                .content("이건 바꾸고 싶은 내용이야.")
+                .build();
+
+        //when
+        postService.edit(post.getId(), postEdit);
+
+        //then
+        Post afterPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id : " + post.getId()));
+        Assertions.assertThat(afterPost.getTitle()).isEqualTo("이건 바꾸고 싶은 제목이야.");
+        Assertions.assertThat(afterPost.getContent()).isEqualTo("내용");
+    }
+
+    @Test
+    @DisplayName("글 내용 수정")
+    public void 글_내용_수정() {
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+//                .title("이건 바꾸고 싶은 제목이야.")
+                .content("이건 바꾸고 싶은 내용이야.")
+                .build();
+
+        //when
+        postService.edit(post.getId(), postEdit);
+
+        //then
+        Post afterPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id : " + post.getId()));
+        Assertions.assertThat(afterPost.getTitle()).isEqualTo("제목");
+        Assertions.assertThat(afterPost.getContent()).isEqualTo("이건 바꾸고 싶은 내용이야.");
     }
 }
