@@ -2,6 +2,7 @@ package com.sulog.api.controller.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sulog.api.domain.post.Post;
+import com.sulog.api.model.post.PostEdit;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.response.PostResponseDto;
 import com.sulog.api.repository.post.PostRepository;
@@ -202,6 +203,33 @@ class PostControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @DisplayName("글 제목 수정")
+    public void 글_제목_수정() throws Exception{
+        //given
+        Post post = Post.builder()
+                .title("배고파")
+                .content("삼겹살 먹고 싶다.")
+                .build();
+
+        postRepository.save(post);
+
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("다른게 먹고 싶어졌어.")
+//                .content("라면 먹고 싶다.")
+                .build();
+
+        //when & then
+        mockMvc.perform(MockMvcRequestBuilders.put("/posts/{postId}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(post.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("다른게 먹고 싶어졌어."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").value("삼겹살 먹고 싶다."))
+                .andDo(MockMvcResultHandlers.print());
+    }
 
 
 }

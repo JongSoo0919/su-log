@@ -1,6 +1,7 @@
 package com.sulog.api.repository.post;
 
 import com.sulog.api.domain.post.Post;
+import com.sulog.api.model.post.PostEdit;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -59,7 +60,11 @@ class PostRepositoryTest {
 
         //when
         Post afterPost = postRepository.save(beforePost);
-        afterPost.update("콘텐츠는 수정되었습니다.");
+
+        PostEdit postEdit = PostEdit.builder()
+                .content("콘텐츠는 수정되었습니다.")
+                .build();
+        afterPost.update(postEdit);
 
         //then
         Assertions.assertThat(beforePost.getTitle()).isEqualTo(afterPost.getTitle());

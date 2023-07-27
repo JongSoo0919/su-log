@@ -1,6 +1,7 @@
 package com.sulog.api.controller.post;
 
 import com.sulog.api.domain.post.Post;
+import com.sulog.api.model.post.PostEdit;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.request.PostSearchRequestDto;
 import com.sulog.api.model.post.response.PostResponseDto;
@@ -63,6 +64,10 @@ public class PostController {
 //            Pageable page
             @ModelAttribute PostSearchRequestDto postSearchRequestDto
             ){
+        /**
+         * 페이지 객체를 가져오지 않는 이상, 전체를 반환하도록 설계
+         * 미 동작으로재구현
+         */
         if(Objects.isNull(postSearchRequestDto)){
             return postService.getAll().stream()
                     .map(PostResponseDto::new)
@@ -75,7 +80,7 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public ResponseEntity<Long> post(
+    public ResponseEntity<Long> write(
             @RequestBody @Valid PostRequestDto params
             ) throws Exception{
         log.info("params : {} ", params.toString());
@@ -83,6 +88,19 @@ public class PostController {
         Post post = postService.write(params);
 
         return ResponseEntity.ok(post.getId());
+    }
+
+    @PutMapping("/posts/{postId}")
+    public ResponseEntity<PostResponseDto> edit(
+            @PathVariable Long postId,
+            @RequestBody @Valid PostEdit postEdit,
+            HttpServletRequest request
+            ) throws Exception{
+        log.info("postEdit : {} ", postEdit.toString());
+
+        PostResponseDto postResponseDto = new PostResponseDto(postService.edit(postId, postEdit));
+
+        return ResponseEntity.ok(postResponseDto);
     }
 
 
