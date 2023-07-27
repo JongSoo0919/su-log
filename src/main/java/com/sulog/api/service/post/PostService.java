@@ -2,6 +2,7 @@ package com.sulog.api.service.post;
 
 import com.sulog.api.domain.post.Post;
 import com.sulog.api.domain.post.PostEditor;
+import com.sulog.api.exception.PostNotFoundException;
 import com.sulog.api.model.post.PostEdit;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.request.PostSearchRequestDto;
@@ -34,13 +35,13 @@ public class PostService {
 
     public Post getOne(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글 입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         return post;
     }
     public Post getRss(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글 입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         return post;
     }
@@ -78,7 +79,7 @@ public class PostService {
     @Transactional
     public Post edit(Long postId, PostEdit postEdit){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글 입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
 //        post.update(postEdit);
 
@@ -95,7 +96,7 @@ public class PostService {
 
     public void deleteById(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글 입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         postRepository.deleteById(post.getId());
     }
