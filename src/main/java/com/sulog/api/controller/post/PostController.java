@@ -103,5 +103,12 @@ public class PostController {
         return ResponseEntity.ok(postResponseDto);
     }
 
+    @DeleteMapping("/posts/{postId}")
+    public void edit(
+            @PathVariable Long postId,
+            HttpServletRequest request
+    ) throws Exception{
+        postService.deleteById(postId);
+    }
 
 }
