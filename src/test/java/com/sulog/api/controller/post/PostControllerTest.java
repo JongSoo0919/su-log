@@ -249,5 +249,54 @@ class PostControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @DisplayName("존재하지 않는 게시글 조회")
+    public void 존재하지_않는_게시글_조회() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
 
+    @Test
+    @DisplayName("존재하지 않는 게시글 수정")
+    public void 존재하지_않는_게시글_수정() throws Exception{
+        PostEdit postEdit = PostEdit.builder()
+                .title("다른게 먹고 싶어졌어.")
+                .content("라면 먹고 싶다.")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 게시글 삭제")
+    public void 존재하지_않는_게시글_삭제() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.delete("/posts/{postId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("게시글 작성 시 '금지어'가 제목으로 들어가면 InvalidException이 동작한다.")
+    void write_Exception_Test() throws Exception {
+        //given
+        PostRequestDto postRequestDto = PostRequestDto.builder()
+                .title("금지어가 들어간다..")
+                .content("내용입니다.")
+                .build();
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postRequestDto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
