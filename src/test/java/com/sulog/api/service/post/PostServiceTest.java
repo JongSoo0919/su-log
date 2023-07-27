@@ -1,9 +1,11 @@
 package com.sulog.api.service.post;
 
 import com.sulog.api.domain.post.Post;
+import com.sulog.api.exception.PostNotFoundException;
 import com.sulog.api.model.post.PostEdit;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.post.request.PostSearchRequestDto;
+import com.sulog.api.model.post.response.PostResponseDto;
 import com.sulog.api.repository.post.PostRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -187,5 +189,72 @@ class PostServiceTest {
 
         //then
         Assertions.assertThat(0).isEqualTo(postRepository.count());
+    }
+
+    @Test
+    @DisplayName("게시글 조회 실패")
+    public void 게시글_조회_실패(){
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        //when & then
+        PostNotFoundException e = org.junit.jupiter.api.Assertions.assertThrows(
+                PostNotFoundException.class, () -> {
+                    postService.getOne(post.getId() + 1L);
+                }
+        );
+
+        Assertions.assertThat("존재하지 않는 글 입니다.").isEqualTo(e.getMessage());
+
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패")
+    public void 게시글_삭제_실패(){
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        //when & then
+        PostNotFoundException e = org.junit.jupiter.api.Assertions.assertThrows(
+                PostNotFoundException.class, () -> {
+                    postService.deleteById(post.getId() + 1L);
+                }
+        );
+
+        Assertions.assertThat("존재하지 않는 글 입니다.").isEqualTo(e.getMessage());
+    }
+
+    @Test
+    @DisplayName("게시글 수정 실패")
+    public void 게시글_수정_실패(){
+        //given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        //when & then
+        PostNotFoundException e = org.junit.jupiter.api.Assertions.assertThrows(
+                PostNotFoundException.class, () -> {
+                    postService.edit(post.getId() + 1L, PostEdit.builder()
+                                    .title("수정 실패")
+                                    .content("수정 실패")
+                            .build());
+                }
+        );
+
+        Assertions.assertThat("존재하지 않는 글 입니다.").isEqualTo(e.getMessage());
     }
 }
