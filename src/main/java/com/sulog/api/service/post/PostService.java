@@ -92,4 +92,11 @@ public class PostService {
 
         return post;
     }
+
+    public void deleteById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글 입니다."));
+
+        postRepository.deleteById(post.getId());
+    }
 }
