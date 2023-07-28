@@ -66,14 +66,14 @@ public class PostController {
             @ModelAttribute PostSearchRequestDto postSearchRequestDto
             ){
         /**
-         * 페이지 객체를 가져오지 않는 이상, 전체를 반환하도록 설계
-         * 미 동작으로재구현
-         */
-        if(Objects.isNull(postSearchRequestDto)){
-            return postService.getAll().stream()
-                    .map(PostResponseDto::new)
-                    .collect(Collectors.toList());
-        }
+//         * 페이지 객체를 가져오지 않는 이상, 전체를 반환하도록 설계
+//         * 미 동작으로재구현
+//         */
+//        if(Objects.isNull(postSearchRequestDto)){
+//            return postService.getAll().stream()
+//                    .map(PostResponseDto::new)
+//                    .collect(Collectors.toList());
+//        }
 
         return postService.getPostsByPaging(postSearchRequestDto).stream()
                 .map(PostResponseDto::new)

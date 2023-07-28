@@ -163,16 +163,16 @@ class PostControllerTest {
         postRepository.save(post2);
 
         //when & then
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=0&size=10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()", Matchers.is(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(post1.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("배고파1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("삼겹살 먹고 싶다.1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(post2.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("배고파2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].content").value("삼겹살 먹고 싶다.2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(post2.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("배고파2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("삼겹살 먹고 싶다.2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(post1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("배고파1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].content").value("삼겹살 먹고 싶다.1"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
