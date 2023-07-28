@@ -2,6 +2,7 @@ package com.sulog.api.model.post.request;
 
 import com.sulog.api.exception.InvalidException;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 
@@ -10,8 +11,8 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @NoArgsConstructor
 public class PostRequestDto {
-    @NotBlank(message = "타이틀을 입력해주세요.") private String title;
-    @NotBlank(message = "컨텐츠를 입력해주세요.") private String content;
+    private String title;
+    private String content;
 
     @Builder
     public PostRequestDto(String title, String content) {
@@ -20,6 +21,12 @@ public class PostRequestDto {
     }
 
     public void validate() {
+        if(!StringUtils.hasText(title)){
+            throw new InvalidException("title", "제목은 필수 입니다.");
+        }
+        if(!StringUtils.hasText(content)){
+            throw new InvalidException("content", "내용은 필수 입니다.");
+        }
         if(title.contains("금지어")){
             throw new InvalidException("title", "제목은 금지어를 포함할 수 없습니다.");
         }
