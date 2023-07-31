@@ -19,6 +19,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.restdocs.request.RequestDocumentation;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -60,7 +61,7 @@ public class RestDocPostControllerTest {
 
         this.mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", post.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcRestDocumentation.document("index",
+                .andDo(MockMvcRestDocumentation.document("post-inquiry",
                         RequestDocumentation.pathParameters(
                                 RequestDocumentation.parameterWithName("postId").description("게시글 ID")
                         ),
@@ -90,10 +91,11 @@ public class RestDocPostControllerTest {
                         .content(objectMapper.writeValueAsString(postRequestDto))
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcRestDocumentation.document("index",
+                .andDo(MockMvcRestDocumentation.document("post-create",
                         PayloadDocumentation.requestFields(
-                                PayloadDocumentation.fieldWithPath("title").description("글 제목"),
-                                PayloadDocumentation.fieldWithPath("content").description("글 내용")
+                                PayloadDocumentation.fieldWithPath("title").description("글 제목")
+                                        .attributes(Attributes.key("constraint").value("제목 입력 부탁드립니더.")),
+                                PayloadDocumentation.fieldWithPath("content").description("글 내용").optional()
                         )
                     )
                 )
