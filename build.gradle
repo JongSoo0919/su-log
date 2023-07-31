@@ -72,6 +72,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+asciidoctor.doFirst {
+    delete file("src/main/resources/static/docs")
+}
+
 bootJar {
     dependsOn asciidoctor
 
