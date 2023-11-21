@@ -1,20 +1,30 @@
 <script setup lang="ts">
 import {ref} from "vue";
+import axios from "axios";
 
 const count = ref(0)
+const title = ref("")
+const content = ref("")
+
+const write = function() {
+  axios.post("http://localhost:8080/posts", {
+    title: title.value,
+    content: content.value
+  });
+}
 </script>
 
 <template>
   <div>
-    <el-input type="text" placeholder="제목을 입력해주세요."/>
+    <el-input type="text" v-model="title" placeholder="제목을 입력해주세요."/>
   </div>
 
   <div>
-    <el-input type="textarea" rows="15"></el-input>
+    <el-input type="textarea" v-model="content" rows="15"></el-input>
   </div>
 
   <div class="mt-2">
-    <el-button type="primary">글 작성완료</el-button>
+    <el-button type="primary" @click="write()">글 작성완료</el-button>
   </div>
 </template>
 
