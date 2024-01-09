@@ -26,6 +26,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+
+    @GetMapping("/test")
+    public String test(){
+        return "hello";
+    }
+
     @GetMapping("/posts/get-test")
     public PostResponseRssDto get(
             @RequestParam(name = "title") String title,
@@ -83,13 +89,8 @@ public class PostController {
     @PostMapping("/posts")
     public ResponseEntity<Long> write(
             @RequestBody @Valid PostRequestDto params
-            ,@RequestHeader String authorization
             ) throws Exception{
         log.info("params : {} ", params.toString());
-
-        if (!"인증".equals(authorization)) {
-            throw new RuntimeException("인증 불가");
-        }
 
         params.validate(); // TODO : aop로 메서드 실행마다 체크
         Post post = postService.write(params);
@@ -102,13 +103,8 @@ public class PostController {
             @PathVariable Long postId,
             @RequestBody @Valid PostEdit postEdit,
             HttpServletRequest request
-            ,@RequestHeader String authorization
             ) throws Exception{
         log.info("postEdit : {} ", postEdit.toString());
-
-        if (!"인증".equals(authorization)) {
-            throw new RuntimeException("인증 불가");
-        }
 
         PostResponseDto postResponseDto = new PostResponseDto(postService.edit(postId, postEdit));
 
@@ -119,11 +115,7 @@ public class PostController {
     public void edit(
             @PathVariable Long postId,
             HttpServletRequest request
-            ,@RequestHeader String authorization
     ) throws Exception{
-        if (!"인증".equals(authorization)) {
-            throw new RuntimeException("인증 불가");
-        }
         postService.deleteById(postId);
     }
 
