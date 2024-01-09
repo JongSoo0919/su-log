@@ -83,8 +83,14 @@ public class PostController {
     @PostMapping("/posts")
     public ResponseEntity<Long> write(
             @RequestBody @Valid PostRequestDto params
+            ,@RequestParam() String authorization
             ) throws Exception{
         log.info("params : {} ", params.toString());
+
+        if (!"인증".equals(authorization)) {
+            throw new RuntimeException("인증 불가");
+        }
+
         params.validate(); // TODO : aop로 메서드 실행마다 체크
         Post post = postService.write(params);
 
