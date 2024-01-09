@@ -95,7 +95,8 @@ class PostControllerTest {
                 .build();
 
         // when
-        mockMvc.perform(MockMvcRequestBuilders.post("/posts?authorization=인증")
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                        .header("authorization","인증")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postRequestDto))
                 )

@@ -83,7 +83,7 @@ public class PostController {
     @PostMapping("/posts")
     public ResponseEntity<Long> write(
             @RequestBody @Valid PostRequestDto params
-            ,@RequestParam() String authorization
+            ,@RequestHeader String authorization
             ) throws Exception{
         log.info("params : {} ", params.toString());
 
@@ -102,8 +102,13 @@ public class PostController {
             @PathVariable Long postId,
             @RequestBody @Valid PostEdit postEdit,
             HttpServletRequest request
+            ,@RequestHeader String authorization
             ) throws Exception{
         log.info("postEdit : {} ", postEdit.toString());
+
+        if (!"인증".equals(authorization)) {
+            throw new RuntimeException("인증 불가");
+        }
 
         PostResponseDto postResponseDto = new PostResponseDto(postService.edit(postId, postEdit));
 
@@ -114,7 +119,11 @@ public class PostController {
     public void edit(
             @PathVariable Long postId,
             HttpServletRequest request
+            ,@RequestHeader String authorization
     ) throws Exception{
+        if (!"인증".equals(authorization)) {
+            throw new RuntimeException("인증 불가");
+        }
         postService.deleteById(postId);
     }
 
