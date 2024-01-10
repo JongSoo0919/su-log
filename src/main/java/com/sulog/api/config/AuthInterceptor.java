@@ -14,12 +14,14 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info(">>>>>>>>>>>>>>>>>>>preHandle");
 
-        String accessToken = request.getParameter("accessToken");
-        if("인증".equals(accessToken)){
-            return true;
-        }
+//        String accessToken = request.getParameter("accessToken");
+//        if("인증".equals(accessToken)){
+//            return true;
+//        }
+//
+//        throw new UnauthorizedException();
 
-        throw new UnauthorizedException();
+        return true;
     }
 
     @Override

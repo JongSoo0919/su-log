@@ -34,6 +34,11 @@ public class PostController {
         return "hello world";
     }
 
+    @GetMapping("/test2")
+    public String test2(){
+        return "인증이 필요 없는 페이지";
+    }
+
     @GetMapping("/posts/get-test")
     public PostResponseRssDto get(
             @RequestParam(name = "title") String title,
