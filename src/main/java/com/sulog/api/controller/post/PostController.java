@@ -1,5 +1,6 @@
 package com.sulog.api.controller.post;
 
+import com.sulog.api.config.data.UserSession;
 import com.sulog.api.domain.post.Post;
 import com.sulog.api.exception.InvalidException;
 import com.sulog.api.model.post.PostEdit;
@@ -26,6 +27,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+
+    @GetMapping("/test")
+    public String test(UserSession userSession){
+        log.info(userSession.name);
+        return "hello world";
+    }
 
     @GetMapping("/posts/get-test")
     public PostResponseRssDto get(
