@@ -4,7 +4,9 @@ import com.sulog.api.domain.user.Users;
 import com.sulog.api.exception.InvalidException;
 import com.sulog.api.exception.InvalidSigninInformation;
 import com.sulog.api.model.user.request.LoginRequestDto;
+import com.sulog.api.model.user.response.SessionResponse;
 import com.sulog.api.repository.user.UserRepository;
+import com.sulog.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,14 +19,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-    private final UserRepository userRepository;
+    private final UserService userService;
     @PostMapping("/auth/login")
-    public Users login(@RequestBody LoginRequestDto loginRequestDto) {
+    public SessionResponse login(@RequestBody LoginRequestDto loginRequestDto) {
         log.info(">>> login = {}",loginRequestDto);
-
-        return (userRepository.findByEmailAndPassword(loginRequestDto.getEmail(), loginRequestDto.getPassword())
-                .orElseThrow(InvalidSigninInformation::new));
-
+        String accessToken = userService.signIn(loginRequestDto);
+        return new SessionResponse(accessToken);
     }
 }
 
