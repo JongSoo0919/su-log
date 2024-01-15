@@ -11,6 +11,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -24,10 +27,21 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        String accessToken = webRequest.getHeader("Authorization");
-        if (accessToken == null || accessToken.isEmpty()) {
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        if(request == null) {
             throw new UnauthorizedException();
         }
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies.length == 0) {
+            throw new UnauthorizedException();
+        }
+
+        String accessToken = Arrays.stream(cookies)
+                .filter(cookie -> "SESSION".equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElseThrow(UnauthorizedException::new);
 
         // DB 사용자 확인 작업
         Session session = sessionRepository.findByAccessToken(accessToken)
