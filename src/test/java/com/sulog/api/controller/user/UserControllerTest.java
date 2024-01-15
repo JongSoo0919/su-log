@@ -1,6 +1,7 @@
 package com.sulog.api.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sulog.api.domain.session.Session;
 import com.sulog.api.domain.user.Users;
 import com.sulog.api.model.post.request.PostRequestDto;
 import com.sulog.api.model.user.request.LoginRequestDto;
@@ -92,5 +93,48 @@ class UserControllerTest {
                 .orElseThrow(RuntimeException::new);
 
         Assertions.assertEquals(1L, user.getSessions().size());
+    }
+
+    @Test
+    @DisplayName("로그인 후 권한이 필요한 페이지에 접속")
+    void test4() throws Exception {
+        //given
+        Users user = Users.builder()
+                .name("김종수")
+                .email("pr@gmail.com")
+                .password("1234")
+                .build();
+        Session session = user.addSession();
+        userRepository.save(user);
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/test")
+                        .header("Authorization", session.getAccessToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+    }
+    @Test
+    @DisplayName("로그인 후 검증되지 않은 세션 값으로 권한이 필요한 페이지 접속 불가")
+    void test5() throws Exception {
+        //given
+        Users user = Users.builder()
+                .name("김종수")
+                .email("pr@gmail.com")
+                .password("1234")
+                .build();
+        Session session = user.addSession();
+        userRepository.save(user);
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/test")
+                        .header("Authorization", session.getAccessToken() + "-other")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andDo(MockMvcResultHandlers.print());
+
     }
 }
