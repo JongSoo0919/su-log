@@ -1,5 +1,6 @@
 package com.sulog.api.controller.user;
 
+import com.sulog.api.config.AuthResolver;
 import com.sulog.api.domain.user.Users;
 import com.sulog.api.exception.InvalidException;
 import com.sulog.api.exception.InvalidSigninInformation;
@@ -7,6 +8,8 @@ import com.sulog.api.model.user.request.LoginRequestDto;
 import com.sulog.api.model.user.response.SessionResponse;
 import com.sulog.api.repository.user.UserRepository;
 import com.sulog.api.service.user.UserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.crypto.SecretKey;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Optional;
 
 @RestController
@@ -25,23 +30,28 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<SessionResponse> login(@RequestBody LoginRequestDto loginRequestDto) {
         log.info(">>> login = {}",loginRequestDto);
-        String accessToken = userService.signIn(loginRequestDto);
-        ResponseCookie cookie = ResponseCookie.from("SESSION", accessToken)
-                .domain("localhost")
-                .path("/")
-                .httpOnly(false)
-                .secure(false)
-                .maxAge(Duration.ofDays(30))
-                .sameSite("Strict")
-                .build();
+        Long userId = userService.signIn(loginRequestDto);
+//        ResponseCookie cookie = ResponseCookie.from("SESSION", accessToken)
+//                .domain("localhost")
+//                .path("/")
+//                .httpOnly(false)
+//                .secure(false)
+//                .maxAge(Duration.ofDays(30))
+//                .sameSite("Strict")
+//                .build();
+//
+//        log.info(">>>>>>>>>> cookie = {}",cookie.toString());
 
-        log.info(">>>>>>>>>> cookie = {}",cookie.toString());
+        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(AuthResolver.KEY));
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
+        String jws = Jwts.builder()
+                .subject(String.valueOf(userId))
+                .signWith(key)
+                .compact();
+
+        return ResponseEntity.ok(new SessionResponse(jws));
     }
 }
 
