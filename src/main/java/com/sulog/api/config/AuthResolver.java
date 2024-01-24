@@ -11,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -26,8 +27,8 @@ import java.util.Optional;
 @Slf4j
 public class AuthResolver implements HandlerMethodArgumentResolver {
     private final SessionRepository sessionRepository;
-    public final static String KEY = "Ra9MeLVbrVoRKwlyRh8S7B11dCNLPnqM16/ycg5BIiE=";
-
+    @Value("${jwt.secret.key}")
+    private String key;
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterType().equals(UserSession.class);
@@ -41,7 +42,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             throw new UnauthorizedException();
         }
 
-        byte[] decodedKey = Base64.decodeBase64(KEY);
+        byte[] decodedKey = Base64.decodeBase64(key);
 
         try {
             Jws<Claims> claims = Jwts.parser()

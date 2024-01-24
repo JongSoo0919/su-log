@@ -12,6 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -29,6 +31,8 @@ import java.util.Optional;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    @Value("${jwt.secret.key}")
+    private String secretKey;
     @PostMapping("/auth/login")
     public ResponseEntity<SessionResponse> login(@RequestBody LoginRequestDto loginRequestDto) {
         log.info(">>> login = {}",loginRequestDto);
@@ -44,10 +48,12 @@ public class UserController {
 //
 //        log.info(">>>>>>>>>> cookie = {}",cookie.toString());
 
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(AuthResolver.KEY));
+        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
 
         String jws = Jwts.builder()
                 .subject(String.valueOf(userId))
+                .issuedAt(new Date())
+                .expiration(new Date())
                 .signWith(key)
                 .compact();
 
